@@ -21,3 +21,13 @@ Expert:
     cd ~/.git_template/hooks
     ./make-hooks
     git config --global init.templateDir ~/.git_template
+
+## Almost there
+
+All future cloned repositories will now have your global hooks installed
+automatically.  For any repositories you already have cloned and want updated,
+you need to re-initialize them.
+
+    cd path/to/sandbox/
+    ls -ld .git/        # make sure .git/ is in your current working directory
+    git init            # re-initialize the clone
