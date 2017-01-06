@@ -1,0 +1,62 @@
+#!/usr/bin/env python
+
+HOOKS = (
+    'applypatch-msg',
+    'commit-msg',
+    'post-applypatch',
+    'post-checkout',
+    'post-commit',
+    'post-merge',
+    'post-receive',
+    'pre-applypatch',
+    'pre-auto-gc',
+    'pre-commit',
+    'prepare-commit-msg',
+    'pre-rebase',
+    'pre-receive',
+    'update',
+    'pre-push',
+)
+
+TEMPLATE = r'''
+#!/usr/bin/env python
+
+import os
+import subprocess as sp
+import sys
+
+def main():
+    me = os.path.abspath(sys.argv[0])
+    me_name = os.path.basename(me)
+
+    try:
+        template_dir = os.path.expanduser(
+            sp.check_output(['git', 'config', 'init.templateDir'])
+        ).rstrip('\n')
+    except sp.CalledProcessError:
+        sys.stderr.write('error: githooks requires init.templateDir set\n')
+        return 1
+
+    latest = os.path.abspath(os.path.join(template_dir, 'hooks', me_name))
+    if latest != me:
+        os.execv(latest, [latest] + sys.argv[1:])
+
+    sys.path.insert(0, os.path.dirname(latest))
+
+    import githooks
+    return githooks.call_hook('{HOOK}')
+
+if __name__ == '__main__':
+    sys.exit(main())
+'''.lstrip()
+
+import os
+import sys
+
+def main():
+    for name in HOOKS:
+        with open(name, 'w') as fp:
+            fp.write(TEMPLATE.format(HOOK=name))
+            os.fchmod(fp.fileno(), 0755)
+
+sys.exit(main())
