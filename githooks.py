@@ -31,10 +31,14 @@ def commit_msg():
         fn = sys.argv[1]
 
         with open(fn, 'r+') as fp:
-            with open(fn + GIT_COMMIT_TMP_SUFFIX) as tmpfp:
-                if fp.read() == tmpfp.read():
-                    fp.seek(0)
-                    fp.truncate(0)
+            try:
+                with open(fn + GIT_COMMIT_TMP_SUFFIX) as tmpfp:
+                    if fp.read() == tmpfp.read():
+                        fp.seek(0)
+                        fp.truncate(0)
+            except OSError as exc:
+                if errno.ENOENT != exc.errno:
+                    raise
     finally:
         try:
             os.unlink(fn + GIT_COMMIT_TMP_SUFFIX)
