@@ -36,7 +36,7 @@ def commit_msg():
                     if fp.read() == tmpfp.read():
                         fp.seek(0)
                         fp.truncate(0)
-            except OSError as exc:
+            except IOError as exc:
                 if errno.ENOENT != exc.errno:
                     raise
     finally:
