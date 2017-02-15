@@ -27,7 +27,7 @@ import sys
 
 def main():
     me = os.path.abspath(sys.argv[0])
-    me_name = os.path.basename(me)
+    me_name = '{HOOK}'
 
     try:
         template_dir = os.path.expanduser(
@@ -44,7 +44,7 @@ def main():
     sys.path.insert(0, os.path.dirname(latest))
 
     import githooks
-    return githooks.call_hook('{HOOK}')
+    return githooks.call_hook(me_name)
 
 if __name__ == '__main__':
     sys.exit(main())
